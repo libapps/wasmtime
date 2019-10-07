@@ -973,4 +973,40 @@ syscalls! {
         let memory = ok_or_errno!(get_memory(&mut *vmctx));
         hostcalls::sock_shutdown(wasi_ctx, memory, sock, how)
     }
+
+    pub unsafe extern "C" fn test_func(
+        vmctx: *mut VMContext,
+        tin: wasm32::size_t,
+        tout: wasm32::uintptr_t,
+    ) -> wasm32::__wasi_errno_t {
+        trace!("test_func(tin={:?}, tout={:#?})", tin, tout);
+        let wasi_ctx = ok_or_errno!(get_wasi_ctx(&mut *vmctx));
+        let memory = ok_or_errno!(get_memory(&mut *vmctx));
+        hostcalls::test_func(wasi_ctx, memory, tin, tout)
+    }
+
+    pub unsafe extern "C" fn sock_create(
+        vmctx: *mut VMContext,
+        sock: wasm32::uintptr_t,
+        domain: wasm32::size_t,
+        type_: wasm32::size_t,
+    ) -> wasm32::__wasi_errno_t {
+        trace!("sock_create(sock={:#?}, domain={:?}, type={:?})", sock, domain, type_);
+        let wasi_ctx = ok_or_errno!(get_wasi_ctx(&mut *vmctx));
+        let memory = ok_or_errno!(get_memory(&mut *vmctx));
+        hostcalls::sock_create(wasi_ctx, memory, sock, domain, type_)
+    }
+
+    pub unsafe extern "C" fn sock_connect(
+        vmctx: *mut VMContext,
+        sock: wasm32::__wasi_fd_t,
+        domain: wasm32::size_t,
+        addr: wasm32::uintptr_t,
+        port: u16,
+    ) -> wasm32::__wasi_errno_t {
+        trace!("sock_connect(sock={:?}, domain={:?}, addr={:#}, port={:?})", sock, domain, addr, port);
+        let wasi_ctx = ok_or_errno!(get_wasi_ctx(&mut *vmctx));
+        let memory = ok_or_errno!(get_memory(&mut *vmctx));
+        hostcalls::sock_connect(wasi_ctx, memory, sock, domain, addr, port)
+    }
 }
