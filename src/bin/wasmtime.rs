@@ -325,6 +325,12 @@ fn rmain() -> Result<(), Error> {
         instantiate_wasi("", global_exports.clone(), &preopen_dirs, &argv, &environ)?
     };
 
+    // WASSH extensions.
+    module_registry.insert(
+        "wassh_experimental".to_owned(),
+        Instance::from_handle(store.clone(), wasi.clone())?,
+    );
+
     module_registry.insert(
         "wasi_unstable".to_owned(),
         Instance::from_handle(store.clone(), wasi.clone())?,
