@@ -857,6 +857,18 @@ __wasi_errno_t wasmtime_ssp_sock_shutdown(
 __wasi_errno_t wasmtime_ssp_sched_yield(void)
     WASMTIME_SSP_SYSCALL_NAME(sched_yield) __attribute__((__warn_unused_result__));
 
+__wasi_errno_t wasmtime_ssp_test_func(
+    size_t tin,
+    size_t *tout
+) WASMTIME_SSP_SYSCALL_NAME(test_func) __attribute__((__warn_unused_result__));
+
+__wasi_errno_t wasmtime_ssp_socket(
+    __wasi_fd_t *sock,
+    int domain,
+    int type,
+    int protocol
+) WASMTIME_SSP_SYSCALL_NAME(socket) __attribute__((__warn_unused_result__));
+
 #ifdef __cplusplus
 }
 #endif

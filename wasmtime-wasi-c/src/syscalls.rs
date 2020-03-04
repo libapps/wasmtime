@@ -3,6 +3,8 @@ use crate::instantiate::WASIState;
 use core::convert::TryFrom;
 use cranelift_codegen::ir::types::{Type, I32, I64};
 use host;
+use std::convert::TryFrom;
+use std::convert::TryInto;
 use std::{mem, ptr, slice, str};
 use translate::*;
 use wasm32;
@@ -1450,6 +1452,39 @@ syscalls! {
     pub unsafe extern "C" fn sched_yield(_vmctx: *mut VMContext,) -> wasm32::__wasi_errno_t {
         let e = host::wasmtime_ssp_sched_yield();
 
+        return_encoded_errno(e)
+    }
+
+    pub unsafe extern "C" fn test_func(
+        vmctx: *mut VMContext,
+        tin: wasm32::size_t,
+        tout: wasm32::uintptr_t,
+    ) -> wasm32::__wasi_errno_t {
+        let vmctx = &mut *vmctx;
+        let mut host_tout = 0;
+        let e = host::wasmtime_ssp_test_func(tin.try_into().unwrap(), &mut host_tout);
+        if u32::from(e) == host::__WASI_ESUCCESS {
+            encode_usize_byref(vmctx, tout, host_tout);
+        }
+        return_encoded_errno(e)
+    }
+
+    pub unsafe extern "C" fn socket(
+        vmctx: *mut VMContext,
+        sock: wasm32::uintptr_t,
+        domain: wasm32::size_t,
+        type_: wasm32::size_t,
+        protocol: wasm32::size_t,
+    ) -> wasm32::__wasi_errno_t {
+        let vmctx = &mut *vmctx;
+        let mut host_sock = 0;
+        let e = host::wasmtime_ssp_socket(&mut host_sock,
+                                          domain.try_into().unwrap(),
+                                          type_.try_into().unwrap(),
+                                          protocol.try_into().unwrap());
+        if u32::from(e) == host::__WASI_ESUCCESS {
+            encode_usize_byref(vmctx, sock, host_sock.try_into().unwrap());
+        }
         return_encoded_errno(e)
     }
 

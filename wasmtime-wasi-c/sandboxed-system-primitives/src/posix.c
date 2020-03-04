@@ -2779,3 +2779,21 @@ void argv_environ_init(struct argv_environ_values *argv_environ,
   }
   memcpy(argv_environ->environ_buf, environ_buf, environ_buf_len);
 }
+
+__wasi_errno_t wasmtime_ssp_test_func(size_t in, size_t* out) {
+  if (out == NULL)
+    return convert_errno(EINVAL);
+
+  *out = (in + 10) | 0x80;
+  return 0;
+}
+
+__wasi_errno_t wasmtime_ssp_socket(__wasi_fd_t *sock, int domain, int type,
+                                   int protocol) {
+  int ret = socket(domain, type, protocol);
+  if (ret < 0)
+    return convert_errno(EINVAL);
+
+  *sock = ret;
+  return 0;
+}

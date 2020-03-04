@@ -108,6 +108,8 @@ pub fn instantiate_wasi_c(
     signature!(sock_recv);
     signature!(sock_send);
     signature!(sock_shutdown);
+    signature!(test_func);
+    signature!(socket);
 
     let imports = Imports::none();
     let data_initializers = Vec::new();
